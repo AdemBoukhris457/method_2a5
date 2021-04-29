@@ -338,12 +338,12 @@ if (
                     <!-- end pageheader  -->
                     <!-- ============================================================== -->
                     
-                    <div class="row">
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="dashboard-container">
+                        <div class="row">
                             <div class="card">
-                                <h5 class="card-header">Ajout</h5>
+                                <h3 class="card-header">Ajout</h3>
                                 <form action="" method="POST">
-                                    <table border="0" align="center">
+                                    <table class="table">
                                         <tr>
                                             <td>
                                                 <label for="nom">Nom:
@@ -390,18 +390,16 @@ if (
                                         <tr>
                                             <td></td>
                                             <td>
-                                                <input type="submit" value="Ajouter">
+                                                <input type="submit" value="Ajouter" class="btn-primary btn-lg">
                                             </td>
                                         </tr>
                                     </table>
                                 </form>
                             </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="card">
-                                <h5 class="card-header">Modification</h5>
+                                <h3 class="card-header">Modification</35>
                                 <form action="modifier-recettes.php" method="POST">
-                                    <table border="0" align="center">
+                                    <table class="table">
                                         <tr>
                                             <td>
                                                 <label for="ID">ID:
@@ -454,7 +452,7 @@ if (
                                         <tr>
                                             <td></td>
                                             <td>
-                                                <input type="submit" value="Modifier">
+                                                <input type="submit" value="Modifier" class="btn-primary btn-lg">
                                             </td>
                                         </tr>
                                     </table>
@@ -497,7 +495,7 @@ if (
                                             
                                             <td>
                                                 <form method="POST" action="supprimer-recette.php">
-                                                    <input type="submit" name="supprimer" value="supprimer">
+                                                    <input type="submit" name="supprimer" value="supprimer" class="btn-light btn-lg">
                                                     <input type="hidden" value=<?PHP echo $user['id_recette']; ?> name="id_recette">
                                                 </form>
                                             </td>

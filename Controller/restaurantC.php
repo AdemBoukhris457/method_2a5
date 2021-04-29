@@ -1,5 +1,5 @@
 <?php 
-    include "../config.php";
+    include_once "../config.php";
     require_once "../Model/restaurant.php";
 class restaurantC {
 
@@ -110,21 +110,32 @@ class restaurantC {
 
     }
     function recupererRestaurant($nom){
-        $sql="SELECT * from restaurants where nom=$nom";
+        $sql='SELECT * from restaurants where nom = "'.$nom.'"';
         $db = config::getConnexion();
         try{
-            $query=$db->prepare($sql);
-            $query->execute();
+            $listeresto = $db->query($sql);
+            return $listeresto ;
 
-            $restaurant=$query->fetch();
-            return $restaurant;
-        }
-        catch (Exception $e){
-            die('Erreur: '.$e->getMessage());
-        }
+      } catch (Exception $e) {die ('erreur : '.$e->getMessage());}
+    
+     }
+    
+
+function count_table(){
+    $sql="SELECT count(*) as total from restaurants";
+    $db = config::getConnexion();
+    try{
+        $query=$db->prepare($sql);
+        $query->execute();
+        $num=$query->fetch();
+        return $num;
     }
+    catch (Exception $e){
+        die('Erreur: '.$e->getMessage());
+    }
+
 }
 
 
-
+}
 ?>

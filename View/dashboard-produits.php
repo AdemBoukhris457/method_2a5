@@ -329,6 +329,9 @@ if (
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="page-header">
+                            <div id="error" class="error">
+                                 <h3><?php echo nl2br($error); ?></h3>
+                            </div>
                                 <h3 class="mb-2">Produits </h3>
                                 <p class="pageheader-text">Proin placerat ante duiullam scelerisque a velit ac porta, fusce sit amet vestibulum mi. Morbi lobortis pulvinar quam.</p>
                             </div>
@@ -338,12 +341,12 @@ if (
                     <!-- end pageheader  -->
                     <!-- ============================================================== -->
                     
-                    <div class="row">
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="dashboard-content">
+                        <div class="row">
                             <div class="card">
-                                <h5 class="card-header">Ajout</h5>
+                                <h3 class="card-header">Ajout</h3>
                                 <form action="" method="POST">
-                                    <table border="0" align="center" >
+                                    <table class="table" >
                                         <tr>
                                             <td>
                                                 <label for="nom">Nom:
@@ -373,7 +376,7 @@ if (
                                                 </label>
                                             </td>
                                             <td>
-                                            <textarea type="textarea" name="description" id="description" cols="30" rows="8" ></textarea>
+                                            <textarea class="form-control" type="textarea" name="description" id="description" cols="30" rows="8" ></textarea>
                                             </td>
                                         </tr>
                                         <tr>
@@ -389,18 +392,18 @@ if (
                                         <tr>
                                             <td></td>
                                             <td>
-                                                <input type="submit" value="Ajouter">
+                                                <input type="submit" value="Ajouter" class="btn-primary btn-lg">
                                             </td>
                                         </tr>
                                     </table>
                                 </form>
                             </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                        
+                        
                             <div class="card">
-                                <h5 class="card-header">Modification</h5>
+                                <h3 class="card-header">Modification</h3>
                                 <form action="modifier-produits.php" method="POST">
-                                    <table border="0" align="center">
+                                    <table class="table">
                                         <tr>
                                             <td>
                                                 <label for="nom">ID:
@@ -437,7 +440,7 @@ if (
                                                 </label>
                                             </td>
                                             <td>
-                                            <textarea type="textarea" name="description1" id="description1" cols="30" rows="10" ></textarea>
+                                            <textarea classs="form-control" type="textarea" name="description1" id="description1" cols="30" rows="10" ></textarea>
                                             </td>
                                         </tr>
                                         <tr>
@@ -453,7 +456,7 @@ if (
                                         <tr>
                                             <td></td>
                                             <td>
-                                                <input type="submit" value="Modifier">
+                                                <input type="submit" value="Modifier" class="btn-primary btn-lg">
                                             </td>
                                         </tr>
                                     </table>
@@ -496,7 +499,7 @@ if (
                                             
                                             <td>
                                                 <form method="POST" action="">
-                                                    <input type="submit" name="supprimer" value="supprimer">
+                                                    <input type="submit" name="supprimer" value="supprimer"  class="btn-light btn-lg">
                                                     <input type="hidden" value=<?PHP echo $user['id_produit']; ?> name="id">
                                                 </form>
                                             </td>

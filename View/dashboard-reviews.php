@@ -1,8 +1,11 @@
 <?php
 include "../Controller/ReviewC.php";
+include "../Controller/restaurantC.php";
 
 $ReviewC = new ReviewC();
 $listeReviews = $ReviewC->afficherReviews();
+$RestaurantC =new restaurantC;
+$listeResto = $RestaurantC->afficherRestaurants();
 ?>
 <?php
 
@@ -14,23 +17,41 @@ $ReviewC = new ReviewC();
 if (
     isset($_POST["nom"]) &&
     isset($_POST["description"]) &&
-    isset($_POST["score"])
-) {
+    isset($_POST["score"]) &&
+    isset($_POST['id_restaurant'])
+) { 
     if (
         !empty($_POST["nom"]) &&
         !empty($_POST["description"]) &&
-        !empty($_POST["score"])
+        !empty($_POST["score"]) &&
+        !empty($_POST["id_restaurant"])
       
         
     ) {
+        $upper=$_POST["nom"][0];
+        if(ctype_upper($upper) && $_POST["score"]>=0 && $_POST["score"]<=5 && is_numeric($_POST["nom"])==false){
+        $check=true;
+        }
+            if(ctype_upper($upper)==false)
+            {
+                $error.="Entrer un nom majuscule\n";
+            }
+            if($_POST["score"]>5 || $_POST["score"]<0){
+                $error.="Entrer un score entre 0 et 5\n";
+            }
+            if(is_numeric($_POST["specialite"])){
+                $error.="Verifier le champ Nom";
+            }
+            
         $user = new Review(
             $_POST['nom'],
             $_POST['description'],
             intval($_POST['score']),
             date("Y/m/d"),
+            intval($_POST['id_restaurant'])
             
         );
-        if($_POST['action'] == 'Ajouter') {
+        if($_POST['action'] == 'Ajouter' &&$check) {
             $ReviewC->ajouterReview($user);
             header('location:dashboard-reviews.php');
         }
@@ -324,165 +345,189 @@ if (
         <!-- wrapper  -->
         <!-- ============================================================== -->
         <div class="dashboard-wrapper">
-            <div class="dashboard-finance">
-                <div class="container-fluid dashboard-content">
+            <div class="container-fluid dashboard-content">
+                <div class="row">
                     <!-- ============================================================== -->
                     <!-- pageheader  -->
                     <!-- ============================================================== -->
-                    <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                            <div class="page-header">
-                            <div id="error">
-                                 <?php echo $error; ?>
-                            </div>
-                                <h3 class="mb-2">Reviews </h3>
-                                <p class="pageheader-text">Proin placerat ante duiullam scelerisque a velit ac porta, fusce sit amet vestibulum mi. Morbi lobortis pulvinar quam.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- ============================================================== -->
-                    <!-- end pageheader  -->
-                    <!-- ============================================================== -->
-                    
-                    <div class="row">
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div class="card">
-                                <h5 class="card-header">Ajouter</h5>
-                                <form action="dashboard-reviews.php" method="POST">
-                                    <table border="0" align="center">
-                                        <tr>
-                                            <td>
-                                            <label for="nom">Nom:
-                        </label>
-                    </td>
-                    <td><input type="text" name="nom" id="nom" maxlength="20"></td>
-                <tr>
-                    <td>
-                        <label for="description">Description:
-                        </label>
-                    </td>
-                    <td><textarea type="textarea" name="description" id="description" cols="30" rows="10" ></textarea></td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <label for="score">Score:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="number" name="score" id="score">
-                    </td>
-                </tr>
-
-                                        <tr>
-                                            <td></td>
-                                            <td>
-                                                <input type="submit" value="Ajouter" name="action">
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div class="card">
-                                <h5 class="card-header">Modification</h5>
-                                <form action="modifier-reviews.php" method="POST">
-                                    <table border="0" align="center">
-                                    <tr>
-                    <td>
-                        <label for="id">ID:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="number" name="id1" id="id1">
-                    </td>
-                </tr>
-                                        <tr>
-                                            <td>
-                                            <label for="nom">Nom:
-                        </label>
-                    </td>
-                    <td><input type="text" name="nom1" id="nom1" maxlength="20"></td>
-                <tr>
-                    <td>
-                        <label for="description">Description:
-                        </label>
-                    </td>
-                    <td><textarea type="textarea" name="description1" id="description1" cols="30" rows="10" ></textarea></td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <label for="score">Score:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="number" name="score1" id="score1">
-                    </td>
-                </tr>
-                
-
-                                        <tr>
-                                            <td></td>
-                                            <td>
-                                                <input type="submit" value="Modifier" name="action">
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="col-xl-10">
                         <div class="row">
-                        <!-- ============================================================== -->
-                        <!-- ap and ar balance  -->
-                        <!-- ============================================================== -->
-                        <div >
-                            <div >
-                                <h3 class="card-header">Affichage
-                                </h5>
-                                <table border=1 align='center' class="content-table">
-                                   <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Nom</th>
-                                        <th>Description</th>
-                                        <th>Score</th>
-                                        <th>Date</th>
-                                        <th>Id_restaurant</th>
-                                        <th>Id_utilisateur</th>
-                                        <th>Supprimer</th>
-                                    </tr>
-                                    </thead> 
-                                    <?PHP
-                                    foreach ($listeReviews as $user) {
-                                    ?>
-                                        <tbody>
-                                        <tr class="active-row">
-                                            <td><?PHP echo $user['id_review']; ?></td>
-                                            <td><?PHP echo $user['nom']; ?></td>
-                                            <td><textarea><?PHP echo $user['description']; ?></textarea></td>
-                                            <td><?PHP echo $user['score']; ?></td>
-                                            <td><?PHP echo $user['date']; ?></td>
-                                            <td><?PHP echo $user['id_restaurant']; ?></td>
-                                            <td><?PHP echo $user['id_utilisateur']; ?></td>
-
-                                            
-                                            <td>
-                                                <form method="POST" action="supprimer-reviews.php">
-                                                    <input type="submit" name="supprimer" value="supprimer">
-                                                    <input type="hidden" value=<?PHP echo $user['id_review']; ?> name="id_review">
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    <?PHP
-                                    }
-                                    ?>
-                                    </tbody>
-                                </table>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="page-header" id="top">
+                                <div id="error" class="error">
+                                    <h3><?php echo nl2br($error); ?></h3>
+                                </div>
+                                    <h3 class="pageheader-title">Reviews </h3>
+                                    <p class="pageheader-text">Proin placerat ante duiullam scelerisque a velit ac porta, fusce sit amet vestibulum mi. Morbi lobortis pulvinar quam.</p>
+                                    <div class="page-breadcrumb">
+                                        <nav aria-label="breadcrumb">
+                                            <ol class="breadcrumb">
+                                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Restaurants et Reviews</a></li>
+                                                <li class="breadcrumb-item active" aria-current="page">Reviews</li>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        <!-- ============================================================== -->
+                        <!-- end pageheader  -->
+                        <!-- ============================================================== -->
+                        
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="card">
+                                    <h3 class="card-header" id="Ajout">Ajouter</h3>
+                                    <form action="dashboard-reviews.php" method="POST">
+                                        <table class="table">
+                                            <tr>
+                                                <td>
+                                                <label for="nom">Nom:
+                                                    </label>
+                                                </td>
+                                                <td><input type="text" name="nom" id="nom" maxlength="20"></td>
+                                            <tr>
+                                                <td>
+                                                    <label for="description">Description:
+                                                    </label>
+                                                </td>
+                                                <td><textarea class="form-control" type="textarea" name="description" id="description" cols="30" rows="10" ></textarea></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="score">Score:
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="score" id="score">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label style="color:honeydew" for="score">Restaurant_Id:
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                <select name="id_restaurant" id="id_restaurant">
+                                                    <?PHP
+                                                     foreach ($listeResto as $us) {
+                                                    ?>
+                                                     <option value="<?PHP echo $us['id_restaurant']; ?>"><?PHP echo $us['id_restaurant'] ,' Nom du restaurant : ',$us['nom']; ?></option>
+                                                     <?PHP
+                                                    }
+                                                    ?>
+                                                </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <input type="submit" value="Ajouter" name="action" class="btn-primary btn-lg">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </form>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="card">
+                                    <h3 class="card-header" id="Modif">Modification</h3>
+                                    <form action="modifier-reviews.php" method="POST">
+                                        <table class="table">
+                                        <tr>
+                                                <td>
+                                                    <label for="id">ID:
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="id1" id="id1">
+                                                </td>
+                                            </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                        <label for="nom">Nom:
+                                                    </label>
+                                                </td>
+                                                <td><input type="text" name="nom1" id="nom1" maxlength="20"></td>
+                                            <tr>
+                                                <td>
+                                                    <label for="description">Description:
+                                                    </label>
+                                                </td>
+                                                <td><textarea type="textarea" name="description1" id="description1" cols="30" rows="10" ></textarea></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="score">Score:
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="score1" id="score1">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td>
+                                                    <input type="submit" value="Modifier" name="action" class="btn-primary btn-lg">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="row">
+                            <!-- ============================================================== -->
+                            <!-- ap and ar balance  -->
+                            <!-- ============================================================== -->
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <h3 class="card-header" id="Affichage">Affichage
+                                    </h5>
+                                    <div class="card">
+                                    <table class="content-table">
+                                       <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Nom</th>
+                                            <th>Description</th>
+                                            <th>Score</th>
+                                            <th>Date</th>
+                                            <th>Id_restaurant</th>
+                                            <th>Id_utilisateur</th>
+                                            <th>Supprimer</th>
+                                        </tr>
+                                        </thead>
+                                        <?PHP
+                                        foreach ($listeReviews as $user) {
+                                        ?>
+                                            <tbody>
+                                            <tr class="active-row">
+                                                <td><?PHP echo $user['id_review']; ?></td>
+                                                <td><?PHP echo $user['nom']; ?></td>
+                                                <td><textarea><?PHP echo $user['description']; ?></textarea></td>
+                                                <td><?PHP echo $user['score']; ?></td>
+                                                <td><?PHP echo $user['date']; ?></td>
+                                                <td><?PHP echo $user['id_restaurant']; ?></td>
+                                                <td><?PHP echo $user['id_utilisateur']; ?></td>
+                        
+                                                <td>
+                                                    <form method="POST" action="supprimer-reviews.php">
+                                                        <input type="submit" name="supprimer" value="supprimer" class="btn-light btn-lg">
+                                                        <input type="hidden" value=<?PHP echo $user['id_review']; ?> name="id_review">
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        <?PHP
+                                        }
+                                        ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                     </div>
                         <!-- ============================================================== -->
                         <!-- end ap and ar balance  -->
                         <!-- ============================================================== -->
@@ -495,6 +540,16 @@ if (
                         <!-- ============================================================== -->
                         <!-- profit margin  -->
                         <!-- ============================================================== -->
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="sidebar-nav-fixed">
+                            <ul class="list-unstyled">
+                                <li><a href="#Ajout" class="active">Ajout</a></li>
+                                <li><a href="#Modif">Modification</a></li>
+                                <li><a href="#Affichage">Affichage</a></li>
+                                
+                            </ul>
+                        </div>
                     </div>
                     <!-- ============================================================== -->
                     <!-- end profit margin -->

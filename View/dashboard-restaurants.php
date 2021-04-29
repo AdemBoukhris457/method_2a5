@@ -1,16 +1,23 @@
 <?php
 include "../Controller/restaurantC.php";
+include "../Controller/ReviewC.php";
 
 $RestaurantC = new RestaurantC();
 $listeResto = $RestaurantC->afficherRestaurants();
+$ReviewC =new ReviewC();
+$listeReviews = $ReviewC->afficherReviews();
 ?>
 <?php
 
 $error = "";
 
 // create user
+$check=false;
 $user = null;
 $RestaurantC = new restaurantC();
+
+
+
 if (
     isset($_POST["nom"]) &&
     isset($_POST["description"]) &&
@@ -30,6 +37,20 @@ if (
         !empty($_POST["image"])
         
     ) {
+        $upper=$_POST["nom"][0];
+        if(ctype_upper($upper) && $_POST["score"]>=0 && $_POST["score"]<=5 && is_numeric($_POST["specialite"])==false ){
+        $check=true;
+        }
+            if(ctype_upper($upper)==false)
+            {
+                $error.="Entrer un nom majuscule\n";
+            }
+            if($_POST["score"]>5 || $_POST["score"]<0){
+                $error.="Entrer un score entre 0 et 5\n";
+            }
+            if(is_numeric($_POST["specialite"])==true){
+                $error.="Verifier le champ specialité\n";
+            }
         $user = new restaurant(
             $_POST['nom'],
             $_POST['description'],
@@ -39,14 +60,14 @@ if (
             intval($_POST['num_tel']),
             $_POST['image'],
         );
-        if($_POST['action'] == 'Ajouter') {
+        if($_POST['action'] == 'Ajouter'&&$check) {
             $RestaurantC->ajouterRestaurant($user);
             header('location:dashboard-restaurants.php');
         }
         
     }
   else
-        $error = "Missing information";
+        $error= "Missing information";
 }
 
 
@@ -71,14 +92,12 @@ if (
     <link rel="stylesheet" href="assets/vendor/charts/morris-bundle/morris.css">
     <link rel="stylesheet" type="text/css" href="assets/vendor/daterangepicker/daterangepicker.css" />
     <title>Admin Dashboard</title>
-    <style>* {
-  font-family: sans-serif; /* Change your font family */
-}
+    <style> 
 
 .content-table {
   border-collapse: collapse;
   margin: 25px 0;
-  font-size: 0.9em;
+  font-size: 0.8em;
   min-width: 400px;
   border-radius: 5px 5px 0 0;
   overflow: hidden;
@@ -94,7 +113,7 @@ if (
 
 .content-table th,
 .content-table td {
-  padding: 12px 15px;
+  padding: 8px 10px;
 }
 
 .content-table tbody tr {
@@ -333,239 +352,252 @@ if (
         <!-- wrapper  -->
         <!-- ============================================================== -->
         <div class="dashboard-wrapper">
-            <div class="dashboard-finance">
-                <div class="container-fluid dashboard-content">
+            <div class="container-fluid dashboard-content">
+                <div class="row">
                     <!-- ============================================================== -->
                     <!-- pageheader  -->
                     <!-- ============================================================== -->
-                    <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                            <div class="page-header">
-                            <div id="error">
-                                 <?php echo $error; ?>
-                            </div>
-                                <h3 class="mb-2">Restaurants </h3>
-                                <p class="pageheader-text">Proin placerat ante duiullam scelerisque a velit ac porta, fusce sit amet vestibulum mi. Morbi lobortis pulvinar quam.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- ============================================================== -->
-                    <!-- end pageheader  -->
-                    <!-- ============================================================== -->
-                    
-                    <div class="row">
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div class="card">
-                                <h5 class="card-header" >Ajouter</h5>
-                                <form action="dashboard-restaurants.php" method="POST">
-                                    <table border="0" align="center">
-                                        <tr>
-                                            <td>
-                                            <label for="nom">Nom:
-                        </label>
-                    </td>
-                    <td><input type="text" name="nom" id="nom" maxlength="20"></td>
-                <tr>
-                    <td>
-                        <label for="description">Description:
-                        </label>
-                    </td>
-                    <td><textarea type="textarea" name="description" id="description" cols="30" rows="10" ></textarea></td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <label for="score">Score:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="number" name="score" id="score">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="specialite">Specialité:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="text" name="specialite" id="specialite">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="localisation">Localisation:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="text" name="localisation" id="localisation">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="num_tel">Numéro Telephone:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="number" name="num_tel" id="num_tel">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="image">Image:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="file" name="image" id="image">
-                    </td>
-                </tr>
-
-                                        <tr>
-                                            <td></td>
-                                            <td>
-                                                <input type="submit" value="Ajouter" name="action">
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
-                            <div class="card">
-                                <h5 class="card-header">Modification</h5>
-                                <form action="modifierRestaurants.php" method="POST">
-                                    <table border="0" align="center">
-                                    <tr>
-                    <td>
-                        <label for="id">ID:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="number" name="id1" id="id1">
-                    </td>
-                </tr>
-                                        <tr>
-                                            <td>
-                                            <label for="nom">Nom:
-                        </label>
-                    </td>
-                    <td><input type="text" name="nom1" id="nom1" maxlength="20"></td>
-                <tr>
-                    <td>
-                        <label for="description">Description:
-                        </label>
-                    </td>
-                    <td><textarea type="textarea" name="description1" id="description1" cols="30" rows="10" ></textarea></td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <label for="score">Score:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="number" name="score1" id="score1">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="specialite">Specialité:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="text" name="specialite1" id="specialite1">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="localisation">Localisation:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="text" name="localisation1" id="localisation1">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="num_tel">Numéro Telephone:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="number" name="num_tel1" id="num_tel1">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <label for="image">Image:
-                        </label>
-                    </td>
-                    <td>
-                        <input type="file" name="image1" id="image1">
-                    </td>
-                </tr>
-
-                                        <tr>
-                                            <td></td>
-                                            <td>
-                                                <input type="submit" value="Modifier" name="action">
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="col-xl-10">
                         <div class="row">
-                        <!-- ============================================================== -->
-                        <!-- ap and ar balance  -->
-                        <!-- ============================================================== -->
-                        <div >
-                            
-                                <h3 class="card-header">Affichage
-                                </h5>
-                                <div class="card">
-                                <table border=1 align='center' class="content-table">
-                                    <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Nom</th>
-                                        <th>Description</th>
-                                        <th>Score</th>
-                                        <th>Specialite</th>
-                                        <th>Localisation</th>
-                                        <th>Numero Telephone</th>
-                                        <th>Image</th>
-                                        <th>Supprimer</th>
-                                    </tr>
-                                    </thead>
-                                    <?PHP
-                                    foreach ($listeResto as $user) {
-                                    ?>
-                                        <tbody>
-                                        <tr class="active-row">
-                                            <td><?PHP echo $user['id_restaurant']; ?></td>
-                                            <td><?PHP echo $user['nom']; ?></td>
-                                            <td><textarea cols="30" rows="10"><?PHP echo $user['description']; ?></textarea></td>
-                                            <td><?PHP echo $user['score']; ?></td>
-                                            <td><?PHP echo $user['specialite']; ?></td>
-                                            <td><?PHP echo $user['localisation']; ?></td>
-                                            <td><?PHP echo $user['num_tel']; ?></td>
-                                            <td><img src="../images/<?php echo $user['image'];?>" width="200px" height="200px"> </td>
-                                            
-                                            <td>
-                                                <form method="POST" action="supprimer-restaurants.php">
-                                                    <input type="submit" name="supprimer" value="supprimer">
-                                                    <input type="hidden" value=<?PHP echo $user['id_restaurant']; ?> name="id_restaurant">
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    <?PHP
-                                    }
-                                    ?>
-                                    </tbody>
-                                </table>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="page-header" id="top">
+                                <div id="error" class="error">
+                                     <h3><?php echo nl2br($error); ?></h3>
+                                </div>
+                                    <h2 class="pageheader-title">Restaurants </h2>
+                                    <p class="pageheader-text">Proin placerat ante duiullam scelerisque a velit ac porta, fusce sit amet vestibulum mi. Morbi lobortis pulvinar quam.</p>
+                                        <div class="page-breadcrumb">
+                                            <nav aria-label="breadcrumb">
+                                                <ol class="breadcrumb">
+                                                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Forms</a></li>
+                                                    <li class="breadcrumb-item active" aria-current="page">Form Elements</li>
+                                                </ol>
+                                            </nav>
+                                        </div>
+                                </div>
                             </div>
                         </div>
                         <!-- ============================================================== -->
+                        <!-- end pageheader  -->
+                        <!-- ============================================================== -->
+                        
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <div class="card">
+                                        <h3 class="card-header" id="ajout" >Ajouter</h3>
+                                        <form action="dashboard-restaurants.php" method="POST" >
+                                            <table  class="table">
+                                                    <tr>
+                                                        <td>
+                                                        <label for="nom">Nom:
+                                                </label>
+                                                </td>
+                                                <td><input type="text" class="form-control" name="nom" id="nom" maxlength="50" placeholder="Entrer un nom majuscule"></td>
+                                                <tr>
+                                                <td>
+                                                <label for="description">Description:
+                                                </label>
+                                                </td>
+                                                <td><textarea class="form-control" type="textarea" name="description" id="description" cols="30" rows="10" ></textarea></td>
+                                                </tr>
+                        
+                                                <tr>
+                                                <td>
+                                                <label for="score">Score:
+                                                </label>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="score" id="score" placeholder="Entre 0 et 5">
+                                                </td>
+                                                </tr>
+                                                <tr>
+                                                <td>
+                                                    <label for="specialite">Specialité:
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" name="specialite" id="specialite">
+                                                </td>
+                                                                </tr>
+                                                                <tr>
+                                                <td>
+                                                    <label for="localisation">Localisation:
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" name="localisation" id="localisation">
+                                                </td>
+                                                                </tr>
+                                                                <tr>
+                                                <td>
+                                                    <label for="num_tel">Numéro Telephone:
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <input type="tel" class="form-control" name="num_tel" id="num_tel" pattern="[0-9]{2}-[0-9]{3}-[0-9]{3}" placeholder="93-345-678">
+                                                </td>
+                                                                </tr>
+                                                                <tr>
+                                                <td>
+                                                    <label for="image">Image:
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <input type="file" class="form-control" name="image" id="image">
+                                                </td>
+                                                                </tr>
+                                                                    <tr>
+                                                                        <td></td>
+                                                                        <td >
+                                                                            <input type="submit" value="Ajouter" name="action" class="btn-primary btn-lg">
+                                                                        </td>
+                                                                    </tr>
+                                            </table>
+                                        </form>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="card">
+                                        <h3 class="card-header" id="Modif">Modification</3>
+                                        <form action="modifierRestaurants.php" method="POST">
+                                            <table  class="table">
+                                                <tr>
+                                                    <td>
+                                                        <label for="id">ID:
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" name="id1" id="id1">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                                    <td>
+                                                                    <label for="nom">Nom:
+                                                </label>
+                                            </td>
+                                            <td><input type="text" class="form-control" name="nom1" id="nom1" maxlength="50" placeholder="Entrer un nom Majuscule"></td>
+                                                            <tr>
+                                            <td>
+                                                <label for="description">Description:
+                                                </label>
+                                            </td>
+                                            <td><textarea class="form-control" type="textarea" name="description1" id="description1" cols="30" rows="10" ></textarea></td>
+                                                            </tr>
+                        
+                                                            <tr>
+                                            <td>
+                                                <label for="score">Score:
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control" name="score1" id="score1" placeholder="Entre 0 et 5">
+                                            </td>
+                                                            </tr>
+                                                            <tr>
+                                            <td>
+                                                <label for="specialite">Specialité:
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control" name="specialite1" id="specialite1">
+                                            </td>
+                                                            </tr>
+                                                            <tr>
+                                            <td>
+                                                <label for="localisation">Localisation:
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control" name="localisation1" id="localisation1">
+                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                <td>
+                                                <label for="num_tel">Numéro Telephone:
+                                                </label>
+                                                    </td>
+                                                <td>
+                                                <input type="tel" class="form-control" name="num_tel1" id="num_tel1" pattern="[0-9]{2}-[0-9]{3}-[0-9]{3} " placeholder="93-345-678">
+                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                <td>
+                                                <label for="image">Image:
+                                                </label>
+                                                </td>
+                                                <td>
+                                                <input type="file" class="form-control" name="image1" id="image1">
+                                                </td>
+                                            </tr>
+                                                <tr>
+                                                    <td></td>
+                                                    <td >
+                                                        <input type="submit" value="Modifier" name="action" class="btn-primary btn-lg">
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                            <div class="row">
+                            <!-- ============================================================== -->
+                            <!-- ap and ar balance  -->
+                            <!-- ============================================================== -->
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        
+                                    <h3 class="card-header" id="Affichage">Affichage
+                                    </h5>
+                                    <div class="card">
+                                    <table  class="content-table">
+                                        <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Nom</th>
+                                            <th>Description</th>
+                                            <th>Score</th>
+                                            <th>Specialite</th>
+                                            <th>Localisation</th>
+                                            <th>Numero Telephone</th>
+                                            <th>Image</th>
+                                            <th>Supprimer</th>
+                                        </tr>
+                                        </thead>
+                                        <?PHP
+                                        foreach ($listeResto as $user) {
+                                        ?>
+                                            <tbody>
+                                            <tr class="active-row">
+                                                <td><?PHP echo $user['id_restaurant']; ?></td>
+                                                <td><?PHP echo $user['nom']; ?></td>
+                                                <td><textarea class="form-control"><?PHP echo $user['description']; ?></textarea></td>
+                                                <td><?PHP echo $user['score']; ?></td>
+                                                <td><?PHP echo $user['specialite']; ?></td>
+                                                <td><?PHP echo $user['localisation']; ?></td>
+                                                <td><?PHP echo $user['num_tel']; ?></td>
+                                                <td><img src="../images/<?php echo $user['image'];?>" width="200px" height="200px" class="figure-img"> </td>
+                        
+                                                <td >
+                                                    <form method="POST" action="supprimer-restaurants.php" class="form">
+                                                        <input type="submit" name="supprimer" value="supprimer" class="btn-light btn-lg">
+                                                        <input type="hidden" value=<?PHP echo $user['id_restaurant']; ?> name="id_restaurant">
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        <?PHP
+                                        }
+                                        ?>
+                                        </tbody>
+                                    </table>
+                             </div>
+                            </div>
+                        </div>
+                        
                         <!-- end ap and ar balance  -->
                         <!-- ============================================================== -->
                         <!-- ============================================================== -->
@@ -577,6 +609,16 @@ if (
                         <!-- ============================================================== -->
                         <!-- profit margin  -->
                         <!-- ============================================================== -->
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="sidebar-nav-fixed">
+                            <ul class="list-unstyled">
+                                <li><a href="#Ajout" class="active">Ajout</a></li>
+                                <li><a href="#Modif">Modification</a></li>
+                                <li><a href="#Affichage">Affichage</a></li>
+                                
+                            </ul>
+                        </div>
                     </div>
                     <!-- ============================================================== -->
                     <!-- end profit margin -->

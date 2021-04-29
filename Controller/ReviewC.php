@@ -1,5 +1,5 @@
 <?php 
-include "../config.php";
+include_once "../config.php";
 require_once "../Model/review.php";
 class ReviewC{
 
@@ -78,6 +78,44 @@ class ReviewC{
         } catch (Exception $e) {
             die('Erreur: '.$e->getMessage());
         }
+    } 
+    function recupererReview($id_restaurant){
+        $sql='SELECT * from reviews where id_restaurant = "'.$id_restaurant.'"';
+        $db = config::getConnexion();
+        try{
+            $listeresto = $db->query($sql);
+            return $listeresto ;
+
+      } catch (Exception $e) {die ('erreur : '.$e->getMessage());}
+    }
+    function recupererReviewById($id_restaurant){
+        $sql="SELECT * from reviews where id_restaurant=$id_restaurant";
+        $db = config::getConnexion();
+        try{
+            $query=$db->prepare($sql);
+            $query->execute();
+
+            $restaurant=$query->fetch();
+            return $restaurant;
+        }
+        catch (Exception $e){
+            die('Erreur: '.$e->getMessage());
+        }
+    }
+    function count_table(){
+        $sql="SELECT count(*) as total from reviews";
+        $db = config::getConnexion();
+        try{
+            $query=$db->prepare($sql);
+            $query->execute();
+            $num=$query->fetch();
+            return $num;
+        }
+        catch (Exception $e){
+            die('Erreur: '.$e->getMessage());
+        }
+    
+
     }
 }
 ?>

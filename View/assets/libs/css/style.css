@@ -242,7 +242,9 @@ ul li {}
 /*--------------------
  Form
 ---------------------*/
-
+.split {
+    display: flex;
+}
 label {
     display: inline-block;
     max-width: 100%;
@@ -1528,7 +1530,6 @@ Top Header
     display: flex;
     align-items: center;
 }
-
 .navigation-horizontal .nav-link[data-toggle="collapse"]::after {
     display: inline-block;
     width: 0;

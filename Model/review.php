@@ -6,15 +6,16 @@ class Review{
     private ?int $score =null;
     private ?string $date =null;
     private ?int $id_utilisateur =1;
-    private ?int $id_restaurant =35;
+    private ?int $id_restaurant =null;
 
 
-    function __construct(string $nom,string $description,int $score,string $date)
+    function __construct(string $nom,string $description,int $score,string $date,int $id_restaurant)
     {
         $this->nom=$nom;
         $this->description=$description;
         $this->score=$score;
         $this->date=$date;
+        $this->id_restaurant=$id_restaurant;
 
     }
 
