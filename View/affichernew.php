@@ -3,6 +3,41 @@ include "../controller/ProduitC.php";
 
 $AlimentC = new ProduitC();
 $listeAliments = $AlimentC->afficherProduits();
+if (isset($_POST['ASC'])) {
+    $AlimentC = new ProduitC();
+    $listeAliments = $AlimentC->affichertri();
+} elseif (isset($_POST['DESC'])) {
+    $AlimentC = new ProduitC();
+    $listeAliments = $AlimentC->afficherProduits();
+}
+if (isset($_POST['search'])) {
+    $valueToSearch = $_POST['valueToSearch'];
+    $listeAliments = $AlimentC->afficherrech($valueToSearch);
+} else {
+    $listeAliments = $AlimentC->afficherProduits();
+}
+$pC = new ProduitC();
+$num_per_page = 05;
+if (isset($_GET['page'])) {
+    $page = $_GET['page'];
+} else {
+    $page = 1;
+}
+$num_per_page = 05;
+$start_from = ($page - 1) * 05;
+$listeAliments = $pC->afficherpagin($start_from, $num_per_page);
+if (isset($_POST['search'])) {
+    $valueToSearch = $_POST['valueToSearch'];
+    $listeAliments = $AlimentC->afficherrech($valueToSearch);
+} else {
+    $listeAliments = $pC->afficherpagin($start_from, $num_per_page);
+}
+$numa = 05;
+$star = ($page - 1) * 05;
+if (isset($_POST['ASC'])) {
+    $AlimentC = new ProduitC();
+    $listeAliments = $AlimentC->afficherpagintri($star, $numa);
+}
 ?>
 
 <html>
@@ -13,8 +48,21 @@ $listeAliments = $AlimentC->afficherProduits();
     <title> Afficher Liste aliments </title>
     <link rel="stylesheet" href="styl.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Pinyon+Script" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
     <link rel="stylesheet" href="css/styles-merged.css">
     <link rel="stylesheet" href="css/style.min.css">
+    <script>
+    var doc = new jsPDF();
+        window.onload = function() {
+            document.getElementById("download")
+                .addEventListener("click", () => {
+                    var invoice = this.document.getElementById("invoice");
+                    doc.fromHTML(invoice);
+                    doc.save("output.pdf");
+                    
+                })
+        }
+    </script>
 </head>
 
 <body>
@@ -87,77 +135,74 @@ $listeAliments = $AlimentC->afficherProduits();
             </li>
         </ul>
     </section>
-    <section class="section all-products" id="products">
-        <div class="product-center container">
-            <?PHP
-            foreach ($listeAliments as $user) {
-            ?>
-                <div class="product">
-                    <div class="product-header">
-                        <img src="../images/<?php echo $user['image']; ?>" width="200px" height="200px">
-                        <ul class="icons">
-                            <form method="POST" action="supprimerAliments.php">
-                                <input type="submit" name="supprimer" value="supprimer">
-                                <input type="hidden" value=<?PHP echo $user['id_produit']; ?> name="id_produit">
-                            </form>
 
-                            <a href="modifierAliments.php?id_produit=<?PHP echo $user['id_produit']; ?>"> Modifier </a>
-                        </ul>
-                    </div>
-                    <div class="product-footer">
-                        <table>
-                            <tr>
-                                <td>
-                                    <FONT size="1">nom</FONT>
-                                </td>
-                                <td>
-                                    <FONT size="1"><?PHP echo $user['nom']; ?></FONT>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <FONT size="1">nom</FONT>
-                                </td>
-                                <td>
-                                    <FONT size="1"><?PHP echo $user['nb_calories']; ?></FONT>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <FONT size="1">nom</FONT>
-                                </td>
-                                <td>
-                                    <FONT size="1"><?PHP echo $user['poids']; ?></FONT>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <FONT size="1">nom</FONT>
-                                </td>
-                                <td>
-                                    <FONT size="1"><?PHP echo $user['description']; ?></FONT>
-                                </td>
-                            </tr>
-                        </table>
-                        <form method="POST" action="supprimerAliments.php">
-                            <input type="submit" name="supprimer" value="supprimer">
-                            <input type="hidden" value=<?PHP echo $user['id_produit']; ?> name="id_produit">
-                        </form>
+    <form action="affichernew.php" method="post">
+        <input type="submit" name="ASC" value="Ascending"><br><br>
+        <input type="submit" name="DESC" value="Descending"><br><br>
+    </form>
+    <form action="affichernew.php" method="post">
+        <input type="text" name="valueToSearch" placeholder="Value To Search"><br><br>
+        <input type="submit" name="search" value="Filter"><br><br>
+    </form>
+    <button class="btn btn-primary" id="download"> download pdf</button>
+    <section class="probootstrap-section">
+            <div class="container" id="invoice">
+                <div class="row">
+                    <?PHP
+                    foreach ($listeAliments as $user) {
+                    ?>
+                        <div class="col-md-4 col-sm-4 probootstrap-animate">
+                            <div class="probootstrap-block-image">
 
-                        <a href="modifierAliments.php?id_produit=<?PHP echo $user['id_produit']; ?>"> Modifier </a>
-                    </div>
+                                <figure><img src="../images/<?php echo $user['image']; ?>"></figure>
+                                <div class="text">
+                                    <td><span class="date"><?PHP echo $user['nb_calories']; ?> calories</span>
+                                        <span class="date"><?PHP echo $user['poids']; ?> grammes</span>
+                                        <h3><a href="#"><?PHP echo $user['nom']; ?></a></h3>
+                                        <p><?PHP echo $user['description']; ?></p>
+
+                                        <form method="POST" action="supprimerAliments.php">
+                                            <input type="submit" name="supprimer" value="supprimer">
+                                            <input type="hidden" value=<?PHP echo $user['id_produit']; ?> name="id_produit">
+                                        </form>
+
+                                        <a href="modifierAliments.php?id_produit=<?PHP echo $user['id_produit']; ?>"> Modifier </a>
+                                </div>
+                            </div>
+                        </div>
+                    <?PHP
+                    }
+                    ?>
+
                 </div>
-            <?PHP
-            }
-            ?>
-        </div>
+            </div>
+    </section>
 
     </section>
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
     <!-- Custom Script -->
     <script src="./js/index.js"></script>
     <script src="js/scripts.min.js"></script>
     <script src="js/custom.min.js"></script>
+    <?php
+    $liste = $AlimentC->afficherProduits();
+    $total_record = $liste->rowCount();
+    $total_page = ceil($total_record / $num_per_page);
+    if ($page > 1) {
+        echo "<a href='affichernew.php?page=" . ($page - 1) . "' class='btn btn-danger'>Previous</a>";
+    }
+
+
+    for ($i = 1; $i < $total_page + 3; $i++) {
+        echo "<a href='affichernew.php?page=" . $i . "' class='btn btn-primary'>$i</a>";
+    }
+
+    if ($i > $page) {
+        echo "<a href='affichernew.php?page=" . ($page + 1) . "' class='btn btn-danger'>Next</a>";
+    }
+    ?>
 </body>
 
 </html>

@@ -34,7 +34,62 @@
                 die('Erreur: ' . $e->getMessage());
             }	
         }
+    function afficherrech($valueToSearch)
+    {
+        $sql = "SELECT * FROM produits WHERE CONCAT(`nom`, `nb_calories`, `poids`, `description`) LIKE '%" . $valueToSearch . "%'";
+        $db = config::getConnexion();
+        try {
+            $liste = $db->query($sql);
+            return $liste;
+        } catch (Exception $e) {
+            die('Erreur: ' . $e->getMessage());
+        }
+    }
+    function affichertri()
+    {
+        $sql = "SELECT * FROM produits order by nom";
+        $db = config::getConnexion();
+        try {
+            $liste = $db->query($sql);
+            return $liste;
+        } catch (Exception $e) {
+            die('Erreur: ' . $e->getMessage());
+        }
+    }
+    function afficherpagin($start_from, $num_per_page)
+    {
+        $sql = "SELECT * FROM produits limit $start_from,$num_per_page";
+        $db = config::getConnexion();
+        try {
+            $liste = $db->query($sql);
+            return $liste;
+        } catch (Exception $e) {
+            die('Erreur: ' . $e->getMessage());
+        }
+    }
+    function afficherpagintri($start_from, $num_per_page)
+    {
+        $sql = "SELECT * FROM produits order by nom limit $start_from,$num_per_page";
+        $db = config::getConnexion();
+        try {
+            $liste = $db->query($sql);
+            return $liste;
+        } catch (Exception $e) {
+            die('Erreur: ' . $e->getMessage());
+        }
+    }
 
+    function aff()
+    {
+        $sql = "SELECT COUNT(*) FROM produits";
+        $db = config::getConnexion();
+        try {
+            $liste = $db->query($sql);
+            return $liste;
+        } catch (Exception $e) {
+            die('Erreur: ' . $e->getMessage());
+        }
+    }
         function supprimerProduit($id){
             $sql = "DELETE FROM produits WHERE id_produit=$id";
             $db = config::getConnexion();

@@ -127,52 +127,31 @@ if (
         <div class="cont">
             <div class="form sign-in">
                 <form action="" method="POST">
-                    <label>
-                        <span>id recette</span>
-                        <input type="text" name="id_recette" id="id_recette" value="<?php echo $user['id_recette']; ?>">
-                    </label>
+
                     <label>
                         <span>nom</span>
-                        <input type="text" name="nom" id="nom" maxlength="20">
-                        <?php if (isset($nameErr) && !empty($nameErr)) { ?> <span class="error"><?php echo $nameErr;
-                                                                                            } ?></span>
+                        <input type="text" name="nom" id="nom" maxlength="20" value="<?php echo $user['nom']; ?>">
+                        <span><?PHP echo $user['nom']; ?> calories</span>
+
                     </label>
                     <label>
                         <span>ingrediants</span>
-                        <input type="text" name="ingredients" id="ingredients" maxlength="20">
-                        <?php if (isset($agreeErr) && !empty($agreeErr)) { ?> <span class="error"><?php echo $agreeErr;
-                                                                                                } ?></span>
+                        <input type="text" name="ingredients" id="ingredients" maxlength="20" value="<?php echo $user['ingredients']; ?>">
                     </label>
                     <label>
                         <span>description</span>
-                        <input type="text" name="description" id="description">
-                        <?php if (isset($genderErr) && !empty($genderErr)) { ?> <span class="error"><?php echo $genderErr;
-                                                                                                } ?></span>
+                        <input type="text" name="description" id="description" value="<?php echo $user['description']; ?>">
                     </label>
                     <label>
                         <span>specialité</span>
-                        <input type="text" name="specialite" id="specialite">
-                        <?php if (isset($emailErr) && !empty($emailErr)) { ?> <span class="error"><?php echo $emailErr;
-                                                                                                } ?></span>
+                        <input type="text" name="specialite" id="specialite" value="<?php echo $user['specialite']; ?>">
+
                     </label>
                     <label>
                         <span>image</span>
-                        <input type="file" name="image" id="image">
-                        <?php if (isset($websiteErr) && !empty($websiteErr)) { ?> <span class="error"><?php echo $websiteErr;
-                                                                                                    } ?></span>
+                        <img src="../images/<?php echo $user['image']; ?>" width="200px" height="200px">
                     </label>
-                    <label>
-                        <span>id produit</span>
-                        <select name="id_produit" id="id_produit">
-                            <?PHP
-                            foreach ($listeAliments as $us) {
-                            ?>
-                                <option value="<?PHP echo $us['id_produit']; ?>"><?PHP echo $us['id_produit']; ?></option>
-                            <?PHP
-                            }
-                            ?>
-                        </select>
-                    </label>
+
                     <label>
                         <input type="submit" value="Envoyer">
                     </label>

@@ -5,6 +5,7 @@ include_once '../model/Produit.php';
 
 
 $error = "";
+$nameErr = $emailErr = $mobilenoErr = $genderErr = $websiteErr = $agreeErr = "";
 
 // create user
 $AlimentC = new ProduitC();
@@ -15,12 +16,43 @@ if (
     isset($_POST["description"]) &&
     isset($_POST["image"])
 ) {
+    $name = $_POST["nom"];
+    $length = strlen($name);
+    if (empty($_POST["nom"])) {
+        $nameErr = "Name is required";
+    } else
+    if (!preg_match("/^[a-zA-z]*$/", $name)) {
+        $nameErr = "seules les alphabets et les espaces sont permises";
+    }
+    $des = $_POST["description"];
+    $length = strlen($des);
+    if ($length == 0) {
+        $genderErr = "Name is required";
+    } else
+    if (!preg_match("/^[a-zA-z]*$/", $des)) {
+        $genderErr = "seules les alphabets et les espaces sont permises";
+    } else
+    if ($length < 3) {
+        $genderErr = "plus de 3 caracteres";
+    }
+    $image = $_POST["image"];
+    $people = array("jpg", "png");
+    $rest = substr($image, -3);
+    if (in_array($rest, $people)) {
+        $websiteErr = "c'est une image";
+    } else {
+        $websiteErr = "ajouter une image de forme jpg ou png";
+    }
+
     if (
         !empty($_POST["nom"]) &&
         !empty($_POST["nb_calories"]) &&
         !empty($_POST["poids"]) &&
         !empty($_POST["description"]) &&
-        !empty($_POST["image"])
+        !empty($_POST["image"]) &&
+        preg_match("/^[a-zA-z]*$/", $name) &&
+        $length > 3 &&
+        in_array($rest, $people)
     ) {
         $user = new Produit(
             $_POST['nom'],
@@ -45,6 +77,18 @@ if (
     <link rel="stylesheet" type="text/css" href="styleformulaire.css">
     <title>ajout aliments</title>
     <link rel="stylesheet" href="aliments.css">
+    <style>
+        .error {
+            font-size: 9px;
+            border: 1px solid;
+            margin: 5px 0px;
+            padding: 5px 2px 5px 2px;
+            color: #D8000C;
+            background-color: #FFBABA;
+            background-repeat: no-repeat;
+            background-position: 4px center;
+        }
+    </style>
 </head>
 
 <body>
@@ -67,6 +111,9 @@ if (
                     <label>
                         <span>nom</span>
                         <input type="text" name="nom" id="nom" maxlength="20"></td>
+                        <?php if (isset($nameErr) && !empty($nameErr)) { ?> <span class="error"><?php echo $nameErr;
+                                                                                            } ?></span>
+
                     </label>
                     <label>
                         <span>nbre de calories</span>
@@ -79,10 +126,14 @@ if (
                     <label>
                         <span>description</span>
                         <input type="text" name="description" id="description">
+                        <?php if (isset($genderErr) && !empty($genderErr)) { ?> <span class="error"><?php echo $genderErr;
+                                                                                                } ?></span>
                     </label>
                     <label>
                         <span>image</span>
                         <input type="file" name="image" id="image">
+                        <?php if (isset($websiteErr) && !empty($websiteErr)) { ?> <span class="error"><?php echo $websiteErr;
+                                                                                                    } ?></span>
                     </label>
                     <label>
                         <input type="submit" value="Envoyer">

@@ -125,6 +125,9 @@ $listeAliments = $AlimentC->afficherRecette();
                     <td>
                         <a href="modifierRecette.php?id_recette=<?PHP echo $user['id_recette']; ?>"> Modifier </a>
                     </td>
+                    <td>
+                        <a href="alimentseul.php?id_recette=<?PHP echo $user['id_recette']; ?>"> Modifier </a>
+                    </td>
                 </tr>
             <?PHP
             }

@@ -1,14 +1,19 @@
 <?php
 include "../controller/ProduitC.php";
+                $AlimentC = new ProduitC();
+                $listeAliments = $AlimentC->afficherProduits();
 
-$AlimentC = new ProduitC();
-$listeAliments = $AlimentC->afficherProduits();
-if (isset($_POST['search'])) {
-    $valueToSearch = $_POST['valueToSearch'];
-    $listeAliments = $AlimentC->afficherrech($valueToSearch);
-} else {
+if (isset($_POST['ASC']))  
+{
+    $AlimentC = new ProduitC();
+    $listeAliments = $AlimentC->affichertri();
+}
+elseif (isset($_POST['DESC'])) 
+{
+    $AlimentC = new ProduitC();
     $listeAliments = $AlimentC->afficherProduits();
 }
+
 ?>
 
 <html>
@@ -97,9 +102,9 @@ if (isset($_POST['search'])) {
 <body style="background-image: url('jjj.jpg'); background-repeat: no-repeat; background-size: cover;">
     <button><a href="ajouterAliments.php">Ajouter un Utilisateur</a></button>
     <hr>
-    <form action="afficherAlimentss.php" method="post">
-        <input type="text" name="valueToSearch" placeholder="Value To Search"><br><br>
-        <input type="submit" name="search" value="Filter"><br><br>
+    <form action="affichertri.php" method="post">
+        <input type="submit" name="ASC" value="Ascending"><br><br>
+        <input type="submit" name="DESC" value="Descending"><br><br>
         <table border=1 align='center' class="table table-bordered" id="example">
             <thead>
                 <tr>
@@ -140,37 +145,6 @@ if (isset($_POST['search'])) {
             </tbody>
         </table>
     </form>
-    <center>
-        <button class="btn btn-success" id="json">JSON</button>
-        <button class="btn btn-success" id="pdf">PDF</button>
-        <button class="btn btn-success" id="csv">CSV</button>
-    </center>
-    <script type="text/javascript" src="src/jquery-3.3.1.slim.min.js"></script>
-    <script type="text/javascript" src="src/jspdf.min.js"></script>
-    <script type="text/javascript" src="src/jspdf.plugin.autotable.min.js"></script>
-    <script type="text/javascript" src="src/tableHTMLExport.js"></script>
-    <script type="text/javascript">
-        $("#json").on("click", function() {
-            $("#example").tableHTMLExport({
-                type: 'json',
-                filename: 'sample.json'
-            });
-        });
-
-        $("#pdf").on("click", function() {
-            $("#example").tableHTMLExport({
-                type: 'pdf',
-                filename: 'sample.pdf'
-            });
-        });
-
-        $("#csv").on("click", function() {
-            $("#example").tableHTMLExport({
-                type: 'csv',
-                filename: 'sample.csv'
-            });
-        });
-    </script>
 </body>
 
 </html>

@@ -1,14 +1,44 @@
 <?php
 include "../controller/ProduitC.php";
-
+$Alimento = new ProduitC();
+if (isset($_POST["id_produit"])) {
+    $Alimento->supprimerProduit($_POST["id_produit"]);
+    header('Location:afficherAlimentss.php');
+}
 $AlimentC = new ProduitC();
-$listeAliments = $AlimentC->afficherProduits();
+$Alim = new ProduitC();
+$listeAliments = $Alim->afficherProduits();
 if (isset($_POST['search'])) {
     $valueToSearch = $_POST['valueToSearch'];
-    $listeAliments = $AlimentC->afficherrech($valueToSearch);
+    $listep = $AlimentC->afficherrech($valueToSearch);
 } else {
-    $listeAliments = $AlimentC->afficherProduits();
+    $listep = $AlimentC->afficherProduits();
 }
+$pC = new ProduitC();
+
+$num_per_page = 05;
+if (isset($_GET['page'])) {
+    $page = $_GET['page'];
+} else {
+    $page = 1;
+}
+    
+
+$num_per_page = 05;
+$start_from = ($page - 1) * 05;
+$listep = $pC->afficherpagin($start_from, $num_per_page);
+if (isset($_POST['search'])) {
+    $valueToSearch = $_POST['valueToSearch'];
+    $listep = $AlimentC->afficherrech($valueToSearch);
+} else {
+    $listep = $pC->afficherpagin($start_from, $num_per_page);
+}
+    $numa = 05;
+    $star = ($page - 1) * 05;
+    if (isset($_POST['ASC'])) {
+        $AlimentC = new ProduitC();
+        $listep = $AlimentC->afficherpagintri($star, $numa);
+    } 
 ?>
 
 <html>
@@ -97,9 +127,20 @@ if (isset($_POST['search'])) {
 <body style="background-image: url('jjj.jpg'); background-repeat: no-repeat; background-size: cover;">
     <button><a href="ajouterAliments.php">Ajouter un Utilisateur</a></button>
     <hr>
-    <form action="afficherAlimentss.php" method="post">
-        <input type="text" name="valueToSearch" placeholder="Value To Search"><br><br>
-        <input type="submit" name="search" value="Filter"><br><br>
+
+    <form action="afficherpagination.php" method="post">
+        <form action="afficherpagination.php" method="post">
+            <input type="submit" name="ASC" value="Ascending"><br><br>
+            <input type="submit" name="DESC" value="Descending"><br><br>
+        </form>
+        <form action="afficherpagination.php" method="post">
+            <input type="text" name="valueToSearch" placeholder="Value To Search"><br><br>
+            <input type="submit" name="search" value="Filter"><br><br>
+        </form>
+        <form method="POST" action="supprimerpag.php">
+            <input type="submit" name="supprimer" value="supprimer">
+            <input type="text" name="id_produit">
+        </form>
         <table border=1 align='center' class="table table-bordered" id="example">
             <thead>
                 <tr>
@@ -114,7 +155,7 @@ if (isset($_POST['search'])) {
             </thead>
             <tbody>
                 <?PHP
-                foreach ($listeAliments as $user) {
+                foreach ($listep as $user) {
                 ?>
                     <tr>
                         <td><?PHP echo $user['id_produit']; ?></td>
@@ -125,10 +166,7 @@ if (isset($_POST['search'])) {
                         <td><img src="../images/<?php echo $user['image']; ?>" width="200px" height="200px"></td>
                         <td><?PHP echo $user['id_utilisateur']; ?></td>
                         <td>
-                            <form method="POST" action="supprimerAliments.php">
-                                <input type="submit" name="supprimer" value="supprimer">
-                                <input type="hidden" value=<?PHP echo $user['id_produit']; ?> name="id_produit">
-                            </form>
+
                         </td>
                         <td>
                             <a href="modifierAliments.php?id_produit=<?PHP echo $user['id_produit']; ?>"> Modifier </a>
@@ -171,6 +209,24 @@ if (isset($_POST['search'])) {
             });
         });
     </script>
+    <?php
+    $liste = $AlimentC->afficherProduits();
+    $total_record = $liste->rowCount();
+    $total_page = ceil($total_record / $num_per_page);
+    if ($page > 1) {
+        echo "<a href='afficherpagination.php?page=" . ($page - 1) . "' class='btn btn-danger'>Previous</a>";
+    }
+
+
+    for ($i = 1; $i < $total_page + 3; $i++) {
+        echo "<a href='afficherpagination.php?page=" . $i . "' class='btn btn-primary'>$i</a>";
+    }
+
+    if ($i > $page) {
+        echo "<a href='afficherpagination.php?page=" . ($page + 1) . "' class='btn btn-danger'>Next</a>";
+    }
+    ?>
+
 </body>
 
 </html>
