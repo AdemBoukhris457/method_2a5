@@ -6,13 +6,14 @@ private  $id_billet = null;
 private  $nom = null;
 private  $email= null;
 private  $cni= null;
-private  $id_event = null;
+
 private  $nombre= null;
 
 
+private  $id_event= null;
 
 
-function __construct( string $nom,   string $email ,string $cni,string $nombre ,string $id_event ){
+function __construct( string $nom,   string $email ,string $cni,string $nombre, string $id_event){
 
 $this->nom=$nom;
 $this->email=$email;
@@ -39,7 +40,9 @@ return $this->cni;
 function getnombre(): string{
 return $this->nombre;
 }
-function getid_event(){return $this->id_event;}
+function getid_event(): string{
+    return $this->id_event;
+    }
     function setnom(string $nom): void{
 $this->nom=$nom;
 }
@@ -57,11 +60,10 @@ function setnombre(string $nombre): void{
 $this->nombre;
 }
 
+function setid_event(string $id_event): void{
+    $this->id_event;
+    }
 
-public function set_id_event($id_event)
-		{
-			$this->id_event = $id_event;
-		}
 
 }
 

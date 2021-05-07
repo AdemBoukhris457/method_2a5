@@ -45,10 +45,10 @@ class evenementC
     {
 $sql="DELETE FROM evenement WHERE id_event= :id_event";
 $db = config::getConnexion();
-$req=$db->prepare($sql);
-$req->bindValue(':id_event',$id_event);
+$query=$db->prepare($sql);
+$query->bindValue(':id_event',$id_event);
 try{
-$req->execute();
+$query->execute();
 }
 catch (Exception $e){
 die('Erreur: '.$e->getMessage());
@@ -107,6 +107,7 @@ die('Erreur: '.$e->getMessage());
                 die('Erreur: '.$e->getMessage());
             }
         }
+      
 }
 
 ?>

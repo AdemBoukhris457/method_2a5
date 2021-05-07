@@ -17,8 +17,8 @@ class billeterieC
 
      public function ajouterbilleterie($billeterie)
     {
-        $sql="insert into billeterie (nom,email,cni,nombre,id_event)
-        values (:nom,:email,:cni,:nombre,:id_event)";
+        $sql="insert into billeterie (nom,email,cni,nombre)
+        values (:nom,:email,:cni,:nombre)";
         $db=config::getConnexion();
 
         try
@@ -29,7 +29,7 @@ class billeterieC
               'email'=>$billeterie->getemail(),
             'cni'=>$billeterie->getcni(),
                 'nombre'=>$billeterie->getnombre(),
-                'id_event'=>$billeterie->getid_event(),                                                          
+                                                                      
 
 
 
@@ -63,8 +63,7 @@ die('Erreur: '.$e->getMessage());
                     email = :email,
                     cni= :cni,
                     nombre = :nombre,
-                   
-                   id_event = :event,
+             
                    
                 
                     
@@ -76,7 +75,7 @@ die('Erreur: '.$e->getMessage());
               'cni'=>$billeterie->getcni(),
               'nombre'=>$billeterie->getnombre(),
              
-              'id_event'=>$billeterie->getid_event(),
+        
               
                                                                          
             ]);
@@ -113,7 +112,22 @@ die('Erreur: '.$e->getMessage());
                 die('Erreur: '.$e->getMessage());
             }
         }
+        function aaa($id_event){
 
+            $sql="SELECT id_billet, titre,nom,email FROM `billeterie` b INNER JOIN evenement e  where b.id_event=e.id_event  GROUP by b.id_billet";
+            $db = config::getConnexion();
+            try{
+                $req=$db->prepare($sql);
+                $req->bindValue(':id_event',$id_event);
+                
+        $req->execute();
+            return $req->fetchALL();
+            }
+            catch (Exception $e){
+                die('Erreur: '.$e->getMessage());
+            }	
+        }  
+        
 }
 
 ?>
