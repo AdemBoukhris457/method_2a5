@@ -119,6 +119,36 @@ class restaurantC {
       } catch (Exception $e) {die ('erreur : '.$e->getMessage());}
     
      }
+     function recupererRestaurantbySpecialite($specialite){
+        $sql='SELECT * from restaurants where specialite = "'.$specialite.'"';
+        $db = config::getConnexion();
+        try{
+            $listeresto = $db->query($sql);
+            return $listeresto ;
+
+      } catch (Exception $e) {die ('erreur : '.$e->getMessage());}
+    
+     }
+     function recupererRestaurantbyLocalisation($localisation){
+        $sql='SELECT * from restaurants where localisation = "'.$localisation.'"';
+        $db = config::getConnexion();
+        try{
+            $listeresto = $db->query($sql);
+            return $listeresto ;
+
+      } catch (Exception $e) {die ('erreur : '.$e->getMessage());}
+    
+     }
+     function TriSelon_Score(){
+        $sql='SELECT * from restaurants Order by score';
+        $db = config::getConnexion();
+        try{
+            $listeresto = $db->query($sql);
+            return $listeresto ;
+
+      } catch (Exception $e) {die ('erreur : '.$e->getMessage());}
+    
+     }
     
 
 function count_table(){

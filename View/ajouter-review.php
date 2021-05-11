@@ -180,7 +180,7 @@ if (
                                                     <?PHP
                                                      foreach ($listeResto as $us) {
                                                     ?>
-                                                     <option value="<?PHP echo $us['id_restaurant']; ?>"><img src="../images/<?php echo $us['image'];?>" width="100px" height="70px"></option>
+                                                     <option value="<?PHP echo $us['id_restaurant']; ?>"><?PHP echo $us['id_restaurant'] ,' Nom du restaurant : ',$us['nom']; ?></option>
                                                      <?PHP
                                                     }
                                                     ?>
@@ -190,7 +190,7 @@ if (
                                             <tr>
                                                 <td></td>
                                                 <td>
-                                                    <input type="submit" value="Ajouter" name="action" class="btn-primary btn-lg">
+                                                    <input type="submit" value="Ajouter" name="action" class="btn-primary btn-lg">  
                                                 </td>
                                             </tr>
                                         </table>

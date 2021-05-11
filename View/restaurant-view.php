@@ -1,194 +1,82 @@
+<?php 
+include "../Controller/restaurantC.php";
+include "../Controller/ReviewC.php";
+$RestaurantC =new restaurantC;
+$view= $RestaurantC->recupererRestaurant($_POST["nom_resto1"]);
+$ReviewC =new ReviewC;
+$liste=$ReviewC->recupererReview($_POST["id_restoboy"]);
+?>
+<?php  
+$check=false;
+if (
+  isset($_POST["nom"]) &&
+  isset($_POST["description"]) &&
+  isset($_POST["score"])
+
+) {
+  if (
+      !empty($_POST["nom"]) &&
+      !empty($_POST["description"]) &&
+      !empty($_POST["score"]) 
+    
+      
+  ) {
+      $upper=$_POST["nom"][0];
+      if(ctype_upper($upper) && $_POST["score"]>=0 && $_POST["score"]<=5 && is_numeric($_POST["nom"])==false){
+      $check=true;
+      }
+          if(ctype_upper($upper)==false)
+          {
+              $error1="Entrer un nom majuscule";
+          }
+          if($_POST["score"]>5 || $_POST["score"]<0){
+              $error2="Entrer un score entre 0 et 5";
+          }
+          
+      $user = new Review(
+          $_POST['nom'],
+          $_POST['description'],
+          intval($_POST['score']),
+          date("Y/m/d"),
+          ($_POST['id_restaurant'])
+          
+      );
+      if($_POST['action'] == 'Ajouter' && $check==true) {
+          $ReviewC->ajouterReview($user);
+          $view= $RestaurantC->recupererRestaurant($_POST["nom_resto1"]);
+          $ReviewC =new ReviewC;
+          $liste=$ReviewC->recupererReview($_POST["id_restoboy"]);
+           
+      }
+      
+  }
+else
+      $error = "Missing information";
+}
+?>
+
+
 <!DOCTYPE html>
 <!-- Created By CodingNepal - www.codingnepalweb.com -->
-<html lang="en" dir="ltr">
+<html lang="en">  
    <head>
       <meta charset="utf-8">
       <!-- <title>Responsive Drop-down Menu Bar</title> -->
-      <link rel="stylesheet" href="./style.css">
+      
+      <link rel="preconnect" href="https://fonts.gstatic.com">
+      <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Roboto:wght@300;400&display=swap"
+        rel="stylesheet">
+      
+      <link rel="stylesheet" href="css/style.min.css">
+      <link rel="stylesheet" href="css/styles-merged.css">
+      <link rel="stylesheet" href="css/main.css">
+      
+    
       <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
       <script src="https://kit.fontawesome.com/a076d05399.js"></script>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <style>
-        @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
-*{
-  margin: 0;
-  padding: 0;
-  user-select: none;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-body{
-  background: #f2f2f2;
-}
-nav{
-  background: #337ab7;
-}
-nav:after{
-  content: '';
-  clear: both;
-  display: table;
-}
-nav .logo{
-  float: left;
-  color: white;
-  font-size: 27px;
-  font-weight: 600;
-  line-height: 70px;
-  padding-left: 60px;
-}
-nav ul{
-  float: right;
-  margin-right: 40px;
-  list-style: none;
-  position: relative;
-}
-nav ul li{
-  float: left;
-  display: inline-block;
-  background: #337ab7;
-  margin: 0 5px;
-}
-nav ul li a{
-  color: white;
-  line-height: 70px;
-  text-decoration: none;
-  font-size: 18px;
-  padding: 8px 15px;
-}
-nav ul li a:hover{
-  color: cyan;
-  border-radius: 5px;
- 
-}
-nav ul ul li a:hover{
-  box-shadow: none;
-}
-nav ul ul{
-  position: absolute;
-  top: 90px;
-  border-top: 3px solid cyan;
-  opacity: 0;
-  visibility: hidden;
-  transition: top .3s;
-}
-nav ul ul ul{
-  border-top: none;
-}
-nav ul li:hover > ul{
-  top: 70px;
-  opacity: 1;
-  visibility: visible;
-}
-nav ul ul li{
-  position: relative;
-  margin: 0px;
-  width: 150px;
-  float: none;
-  display: list-item;
-  border-bottom: 1px solid rgba(0,0,0,0.3);
-}
-nav ul ul li a{
-  line-height: 50px;
-}
-nav ul ul ul li{
-  position: relative;
-  top: -60px;
-  left: 150px;
-}
-.show,.icon,input{
-  display: none;
-}
-.fa-plus{
-  font-size: 15px;
-  margin-left: 40px;
-}
-@media all and (max-width: 968px) {
-  nav ul{
-    margin-right: 0px;
-    float: left;
-  }
-  nav .logo{
-    padding-left: 30px;
-    width: 100%;
-  }
-  .show + a, ul{
-    display: none;
-  }
-  nav ul li,nav ul ul li{
-    display: block;
-    width: 100%;
-  }
-  nav ul li a:hover{
-    box-shadow: none;
-  }
-  .show{
-    display: block;
-    color: white;
-    font-size: 18px;
-    padding: 0 20px;
-    line-height: 70px;
-    cursor: pointer;
-  }
-  .show:hover{
-    color: cyan;
-  }
-  .icon{
-    display: block;
-    color: white;
-    position: absolute;
-    top: 0;
-    right: 40px;
-    line-height: 70px;
-    cursor: pointer;
-    font-size: 25px;
-  }
-  nav ul ul{
-    top: 70px;
-    border-top: 0px;
-    float: none;
-    position: static;
-    display: none;
-    opacity: 1;
-    visibility: visible;
-  }
-  nav ul ul a{
-    padding-left: 40px;
-  }
-  nav ul ul ul a{
-    padding-left: 80px;
-  }
-  nav ul ul ul li{
-    position: static;
-  }
-  [id^=btn]:checked + ul{
-    display: block;
-  }
-  nav ul ul li{
-    border-bottom: 0px;
-  }
-  span.cancel:before{
-    content: '\f00d';
-  }
-}
-.content{
-  z-index: -1;
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  text-align: center;
-}
-header{
-  font-size: 35px;
-  font-weight: 600;
-  padding: 10px 0;
-}
-p{
-  font-size: 30px;
-  font-weight: 500;
-}
-
-      </style>
+      
    </head>
    <body>
       <nav>
@@ -200,44 +88,113 @@ p{
          </label>
          <input type="checkbox" id="btn">
          <ul>
-            <li><a href="./afficher-resto.php">Home</a></li>
+            <li><a href="./home.php">Home</a></li>
             <li>
-               <label for="btn-1" class="show">Features +</label>
-               <a href="#">Features</a>
+               <a href="#">Recettes/Produits</a>
                <input type="checkbox" id="btn-1">
                <ul>
-                  <li><a href="#">Pages</a></li>
-                  <li><a href="#">Elements</a></li>
-                  <li><a href="#">Icons</a></li>
+                  <li><a href="#">Recettes</a></li>
+                  <li><a href="#">Produits</a></li>
                </ul>
             </li>
             <li>
-               <label for="btn-2" class="show">Services +</label>
-               <a href="#">Services</a>
+               <a href="./afficher-resto.php">Restaurants</a>
                <input type="checkbox" id="btn-2">
                <ul>
-                  <li><a href="#">Web Design</a></li>
-                  <li><a href="#">App Design</a></li>
-                  <li>
-                     <label for="btn-3" class="show">More +</label>
-                     <a href="#">More <span class="fa fa-plus"></span></a>
-                     <input type="checkbox" id="btn-3">
-                     <ul>
-                        <li><a href="#">Submenu-1</a></li>
-                        <li><a href="#">Submenu-2</a></li>
-                        <li><a href="#">Submenu-3</a></li>
-                     </ul>
-                  </li>
+                  <li><a href="#">Restaurants</a></li>
+                  <li><a href="#">Reviews</a></li>
+                  
                </ul>
             </li>
-            <li><a href="#">Portfolio</a></li>
+            <li><a href="#">Blogs</a></li>
             <li><a href="#">Contact</a></li>
          </ul>
       </nav>
-      <div class="content">
-         <header>Responsive Drop-down Menu Bar</header>
-         <p>HTML and CSS (Media Query)</p>
-      </div>
+      <section class="bg-light text-center">
+        <div class="container">
+            <?php
+            foreach($view as $resto){ ?>
+           <header class="text-center"><?php echo $resto['nom'] ?></header> 
+        
+          <div class="split">
+            <div>
+            <h2 class="text-center"> <?php echo $resto['description'] ?></h2>
+            </div>
+            <div>
+            <img src="../images/<?php echo $resto['image'];?>" width="600px" height="350px">
+            </div>
+          </div>
+        
+        </div>
+      </section>
+      <section class="bg-primary">
+        <div class="container">
+          <div>
+            <h2>
+              Numero de telephone: <?php echo $resto['num_tel'] ?> <br>
+              Specialité: <?php echo $resto['specialite'] ?> <br>
+              Localisation: <?php echo $resto['localisation'] ?>
+            </h2>
+          </div>
+
+        </div>
+
+      </section>
+      <section class="bg-light text-center">
+                <div class="container ">
+                <form action="#" method="POST" class="text-center">
+                  <table>
+                    <tr><h2>Ajouter un commentaire</h2></tr>
+                  <tr>
+                    <td><label for="nom" class="">Nom:</label></td>
+                    <td><input type="text" name="nom" id="nom" maxlength="20" class="form-control" ></td>
+                  </tr>
+                <tr>
+                  <td><label for="description"></label></td>
+                <td><textarea name="description" id="description" cols="50" rows="10" placeholder="Ajouter un commentaire"></textarea></td>
+              
+              </tr>
+                <tr>
+                  <td><label for="Score" class="">Score:</label></td>
+                  <td><input type="number" name="score" placeholder="Entre 0 et 5" class="form-control"></td>
+                </tr>
+                <tr>
+                  <td>
+                <input type="submit" name="action" value="Ajouter" class="btn-primary btn-lg"> </td></tr>
+                <input type="hidden" value=<?PHP echo $_POST['id_restoboy']; ?> name="id_restaurant">
+                <input type="hidden" value=<?PHP echo $_POST['id_restoboy']; ?> name="id_restoboy">
+                <input type="hidden" value=<?PHP echo $_POST['nom_resto1']; ?> name="nom_resto1">
+
+                  </table>
+                </form>
+                </div>
+        
+        
+
+      </section>
+      <?php foreach($liste as $comment){ ?>
+      <section class="">
+        <div class="container">
+            <div class="split">
+              <div>
+                <img src="../images/profile.png" width="50px" height="50px"   >
+                <p>Nom: <?php echo $comment["nom"] ?> <br>
+                Commentaire:
+                <?php echo $comment["description"] ?><br>
+                Score:<?php echo $comment["score"] ?>
+              
+                </p>
+                <p>Updated: <?php $date=strtotime(date("Y/m/d"));
+                $date1=strtotime($comment["date"]);
+                $current=($date - $date1)/60/60/24;
+                echo $current ?> days ago </p>
+                <hr style="color:black">
+              </div>
+              
+            </div>
+        </div>
+      </section>
+      <?php }} ?>
       <script>
          $('.icon').click(function(){
            $('span').toggleClass("cancel");

@@ -7,7 +7,7 @@ $RestaurantC =new restaurantC;
 $listeResto = $RestaurantC->afficherRestaurants();
 $num= $RestaurantC->count_table();
 $it=0;
-if(isset($_POST["nom_resto"])){
+if(isset($_POST["nom_resto"])&& !empty($_POST['nom_resto'])){
 if($_POST["action"] =="Go"){
     $listeResto = $RestaurantC->recupererRestaurant($_POST["nom_resto"]);
     $page = $_SERVER['PHP_SELF'];
@@ -15,6 +15,31 @@ if($_POST["action"] =="Go"){
     header("Refresh: $sec; url=$page");
 }
 }
+if(isset($_POST["recherche-specialite"])&& !empty($_POST['recherche-specialite'])){
+    if($_POST["action"] =="Go"){
+        $listeResto = $RestaurantC->recupererRestaurantbySpecialite($_POST["recherche-specialite"]);
+        $page = $_SERVER['PHP_SELF'];
+        $sec = "10";
+        header("Refresh: $sec; url=$page");
+    }
+    }
+    if(isset($_POST["recherche-localisation"])&& !empty($_POST['recherche-localisation'])){
+        if($_POST["action"] =="Go"){
+            $listeResto = $RestaurantC->recupererRestaurantbyLocalisation($_POST["recherche-localisation"]);
+            $page = $_SERVER['PHP_SELF'];
+            $sec = "10";
+            header("Refresh: $sec; url=$page");
+        }
+        }
+if(isset($_POST["action"])&& $_POST["action"] =="Trier")
+{
+    $listeResto=$RestaurantC->TriSelon_Score();
+    $page = $_SERVER['PHP_SELF'];
+    $sec = "30";
+    header("Refresh: $sec; url=$page");
+
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -117,7 +142,7 @@ if($_POST["action"] =="Go"){
 }
 .hoy{
     position: absolute;
-    top: 20%;
+    top: 30%;
     left: 20%;
     bottom: 10%;
     margin-bottom: 100px;
@@ -140,8 +165,8 @@ if($_POST["action"] =="Go"){
 }
 .button{
    position: absolute;
-   top: 25%;
-   left: 1%;
+   top: 20%;
+   left: 30%;
    bottom: 10%;
    margin-bottom: 100px;
 }
@@ -159,6 +184,7 @@ if($_POST["action"] =="Go"){
 
 }
 .button .btn{
+    position: relative;
     display: flexbox;
     color: white;
     text-align: center;
@@ -238,6 +264,13 @@ if($_POST["action"] =="Go"){
                                             <input type="submit" name="action" value="modifier" class="btn">
                                             <input type="hidden" value=<?PHP echo $resto['id_restaurant']; ?> name="id_restaurant">
                                         </form>
+                                        <form action="restaurant-view.php" method="POST">
+                                        <div>
+                                        <input type="submit" name="action" value="View" class="btn form-control">
+                                        <input type="hidden" value=<?PHP echo $resto['nom']; ?> name="nom_resto1">
+                                        <input type="hidden" value=<?PHP echo $resto['id_restaurant']; ?> name="id_restoboy">
+                                        </div>
+                                        </form>
                                     </div>
                                     <?php $it++; ?>
                               </td>
@@ -247,20 +280,34 @@ if($_POST["action"] =="Go"){
                       </table>
                   </div>
               </div>
+              <div class="button">
               <form action="#" method="POST">
-                  <div class="button">
+                  
                       <label for="Search">Rechercher:</label>
                       <input type="text" name="nom_resto" id="nom_resto">
-                      <input type="submit" name="action" value="Go" class="btn">
                       
-                  </div>
+                      <input type="text" name="recherche-specialite" id="specialite-search" placeholder="Specialité">
+                      <input type="text" name="recherche-localisation" id="recherche-specialite-search" placeholder="Localisation">
+                      
+                      <input type="submit" name="action" value="Go" class="btn">
+                      <input type="submit" name="action" Value="Trier" class="btn">
+                      
+                      
+                      
+                  
               </form>
+              
+              </div>
+
+               
+                
       
       </section>
   
 
   <script src="js/scripts.min.js"></script>
   <script src="js/custom.min.js"></script>
+  
 
 </body>
 
